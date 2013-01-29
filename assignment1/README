@@ -1,0 +1,8 @@
+Code for COMP 776 Assignment 1
+
+Execute imdemosaic.m for Bayer pattern problem.
+Execute alignment.m for low resolution image alignment.
+Execute alignment_hires.m for high resolution image alignment by Gaussian
+pyrimad.
+
+Set proper data path and output path in these three scripts before running.
