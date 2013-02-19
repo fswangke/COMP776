@@ -4,7 +4,7 @@ clear all
 close all
 
 % load variables: BackgroundPointCloudRGB,ForegroundPointCloudRGB,K,crop_region,filter_size)
-load data.mat
+load ../data/data.mat
 
 data3DC = {BackgroundPointCloudRGB,ForegroundPointCloudRGB};
 R       = eye(3);
@@ -38,9 +38,10 @@ move = [zeros(2, 75);move];
 outputVideo = VideoWriter('dollyzoom.avi');
 outputVideo2 = VideoWriter('dollyzoom_d.avi');
 outputVideo.FrameRate = 15;
-outputVIdeo2.FrameRate = 15;
+outputVideo2.FrameRate = 15;
 open(outputVideo);
 open(outputVideo2);
+fseq = fopen('cameras.txt', 'w');
 
 % create an image sequence
 for step = 1 : 75
@@ -54,7 +55,7 @@ for step = 1 : 75
     imgHnew = range(foregroundImage(1,:) ./ foregroundImage(3,:));
     imgWnew = range(foregroundImage(2,:) ./ foregroundImage(3,:));
     depth = t_start + move(:,step);
-    fprintf('Depth %f, obj size: %f * %f, focal length %f, %f, K1 %f\n', depth(3), imgHnew, imgWnew, K(1,1), K(2,2), K1(step));
+    fprintf(fseq, 'Depth %f, obj size: %f * %f, focal length %f, %f, K1 %f\n', depth(3), imgHnew, imgWnew, K(1,1), K(2,2), K1(step));
     im = PointCloud2Image(M, data3DC, crop_region, filter_size);
     imwrite(im, fname);
     writeVideo(outputVideo, im);
@@ -67,3 +68,4 @@ end
 
 close(outputVideo);
 close(outputVideo2);
+fclose(fseq);
