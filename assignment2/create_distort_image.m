@@ -50,10 +50,32 @@ img_d_2 = zeros(height, width, 3);
     end
 
 imwrite(imresize(img_d_2, [512, NaN]), 'pincushion_displacement.png');
+%% distortion removal
+img = imread('distorted050.png');
+img = im2double(img);
 
-% create tangent distortion
+K1 = 0.324324;
+[height, width, ~] = size(img);
+S = max(height, width);
+img_ud = zeros(height, width, 3);
+for i = 1 : height
+    disp(i);
+    for j = 1 : width
+        ud = ( 2 * i - height ) / S;
+        vd = ( 2 * j - width  ) / S;
+        r2 =  ud ^ 2 + vd ^ 2;
+        u  = ( 1 + K1 * r2 ) * ud;
+        v  = ( 1 + K1 * r2 ) * vd;
+        x  = round((u * S + height) / 2);
+        y  = round((v * S + width ) / 2);
+        if (x >= 1 && x <= height && y >= 1 && y <= width)
+            img_ud(x,y,:) = img(i,j,:);
+        end
+    end
+end
+imwrite(imresize(img_ud, [512, NaN]), 'undistorted050.png');
 
-%% Distortion removal
+%% create tangent distortion
 img = imread('output033.png');
 img = im2double(img);
 K1 = -0.135135;
