@@ -3,7 +3,7 @@ close all;
 clc;
 
 disp('reading in images');
-datapath = '../../data/cluster';
+datapath = '../../../data/cluster';
 % datapath = '../../data/cluster_extra';
 im_names = dir(fullfile(datapath, '*.png'));
 n_imgs = length(im_names);

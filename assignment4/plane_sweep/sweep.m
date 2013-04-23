@@ -111,7 +111,7 @@ d_far = min(depth_range(:,2));% + 0.8;
 %% Plane sweep
 n = [ 0 0 -1];
 % n_disparity = 250;
-disparity = linspace(d_near, d_far, n_disparity);
+disparity = linspace(1 ./ d_near, 1 ./ d_far, n_disparity);
 
 best_costs = zeros(img_size(2), img_size(1)) + realmax;
 depth = zeros(img_size(2), img_size(1));
@@ -121,7 +121,7 @@ for d_idx = 1 : n_disparity
     cur_cost = zeros(img_size(2), img_size(1)) + realmax;
     %compute cost for each source camera
     for c_idx = 1 : n_nearby_cam
-        H = ref_cam.K * (src_cams{c_idx}.R - src_cams{c_idx}.T * n ./ disparity(d_idx)) * inv(src_cams{c_idx}.K);
+        H = ref_cam.K * (src_cams{c_idx}.R - src_cams{c_idx}.T * n .* disparity(d_idx)) * inv(src_cams{c_idx}.K);
         tform = maketform('projective', H');
         timg = imtransform(src_imgs{c_idx}, tform, 'XData', [1, img_size(1)], 'YData', [1, img_size(2)]);
         %aggregate matching cost
@@ -129,7 +129,7 @@ for d_idx = 1 : n_disparity
     end
     
     updated_idx = best_costs > cur_cost;
-    depth(updated_idx) = disparity(d_idx);
+    depth(updated_idx) = 1 ./ disparity(d_idx);
     best_costs(updated_idx) = cur_cost(updated_idx);
     
     if PLOT_DEPTH == 1
